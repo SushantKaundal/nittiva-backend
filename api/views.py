@@ -10,8 +10,36 @@ from .models import Client, Project, Task
 from .permissions import IsAdminOrReadOnly
 from .utils.responses import success_response, error_response
 from rest_framework_simplejwt.tokens import RefreshToken
+from django.http import JsonResponse
+from django.db import connection
+
 
 User = get_user_model()
+
+# Health check endpoints
+
+@api_view(['GET'])
+@permission_classes([permissions.AllowAny])
+def healthz(request):
+    """
+    Lightweight health check (for ALB).
+    Always returns 200 OK if app is running.
+    """
+    return JsonResponse({"status": "ok"}, status=200)
+
+
+@api_view(['GET'])
+@permission_classes([permissions.AllowAny])
+def readyz(request):
+    """
+    Readiness check – verifies DB connection too.
+    """
+    try:
+        connection.ensure_connection()
+        return JsonResponse({"status": "ok", "db": "ok"}, status=200)
+    except Exception as exc:
+        return JsonResponse({"status": "error", "db": str(exc)}, status=500)
+
 
 
 class LoginSerializer(TokenObtainPairSerializer):
@@ -102,3 +130,6 @@ class TaskViewSet(viewsets.ModelViewSet):
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ['status','project_id','assignee_id']
     permission_classes = [permissions.IsAuthenticated]
+
+
+    
