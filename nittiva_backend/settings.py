@@ -6,7 +6,13 @@ load_dotenv()
 BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv("SECRET_KEY","dev-secret")
 DEBUG = os.getenv("DEBUG","True")=="True"
-ALLOWED_HOSTS = ["api.nittiva.com", "nittiva.com", "www.nittiva.com"]
+ALLOWED_HOSTS = [
+    "api.nittiva.com",
+    "nittiva.com",
+    "www.nittiva.com",
+    "172.31.30.71",   # instance private IP (used internally / by ALB)
+    "23.22.100.187",  # instance public IP (for direct tests)
+]
 CSRF_TRUSTED_ORIGINS = [
     "https://api.nittiva.com",
 ]
