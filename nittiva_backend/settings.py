@@ -6,7 +6,11 @@ load_dotenv()
 BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv("SECRET_KEY","dev-secret")
 DEBUG = os.getenv("DEBUG","True")=="True"
-ALLOWED_HOSTS = ["*"]
+ALLOWED_HOSTS = ["api.nittiva.com", "nittiva.com", "www.nittiva.com"]
+CSRF_TRUSTED_ORIGINS = [
+    "https://api.nittiva.com",
+]
+
 INSTALLED_APPS = [
  "django.contrib.admin","django.contrib.auth","django.contrib.contenttypes","django.contrib.sessions","django.contrib.messages","django.contrib.staticfiles",
  "rest_framework","django_filters","drf_spectacular","corsheaders","api",
@@ -40,5 +44,17 @@ REST_FRAMEWORK = {
 }
 SPECTACULAR_SETTINGS = {"TITLE":"Nittiva API","DESCRIPTION":"Django DRF backend for Nittiva","VERSION":"1.0.0"}
 SIMPLE_JWT = {"AUTH_HEADER_TYPES":("Bearer",)}
-CORS_ALLOWED_ORIGINS=[o.strip() for o in os.getenv("CORS_ALLOWED_ORIGINS","").split(",") if o.strip()]
-CORS_ALLOW_ALL_ORIGINS = not CORS_ALLOWED_ORIGINS
+CORS_ALLOWED_ORIGINS = [
+    "https://nittiva.com",
+    "https://www.nittiva.com",
+    "http://localhost:3000",  # local dev
+]
+CORS_ALLOW_CREDENTIALS = True
+
+USE_X_FORWARDED_HOST = True
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SAMESITE = "None"
+CSRF_COOKIE_SAMESITE = "None"
